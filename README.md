@@ -1,6 +1,6 @@
 # Webkomponente in Angular mit @Angular/Elements
 
-Das Umsetzung dieser Beschreibung ist einem kleinen Beispielprojekt in diesem Repository umgesetzt.
+Die Umsetzung dieser Beschreibung ist einem kleinen Beispielprojekt in diesem Repository umgesetzt.
 
 1. Neues Projekt mit Angular CLI anlegen
 
@@ -47,7 +47,7 @@ export class AppModule {
 ```
 
 4. Zur Unterstützung zum Bau eines Singlebundles `ngx-build-plus` installieren.
-   Mit `ngx-build-plus` kann die Standardfunktionalität von Angular CLI erweitert werden, ohne das das Projekt aus der CLI verwalteten herausgenommen werden muss.
+   Mit `ngx-build-plus` kann die Standardfunktionalität von Angular CLI erweitert werden, ohne das das Projekt aus der CLI verwalteten Umgebung herausgenommen werden muss.
 
 ```
 npm install ngx-build-plus --save-dev
