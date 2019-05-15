@@ -1,27 +1,102 @@
-# AngularWebcomponent
+# Webkomponente in Angular mit @Angular/Elements
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 7.2.1.
+Das Umsetzung dieser Beschreibung ist einem kleinen Beispielprojekt in diesem Repository umgesetzt.
 
-## Development server
+1. Neues Projekt mit Angular CLI anlegen
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+```
+ng new angular-webcomponent
+cd angular-webcomponent
+```
 
-## Code scaffolding
+2. NPM-Pakete für `@angular/elements` und `@webcomponents/custom-elements`.
+   `@webcomponents/custom-elements` stellt die benötigten polyfills für den Einsatz in nicht unterstützten Browsern zur Verfügung.
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+```
+npm install @angular/elements @webcomponents/custom-elements --save
+```
 
-## Build
+3. Veröffentlichen einer Komponente als HtmlCustomElement
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+```javascript
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule, Injector } from '@angular/core';
+import { CustomeElementComponent } from './custome-element/custome-element.component';
+import { createCustomElement } from '@angular/elements';
 
-## Running unit tests
+@NgModule({
+  declarations: [CustomeElementComponent],
+  imports: [BrowserModule],
+  providers: [],
+  bootstrap: [],
+  entryComponents: [CustomeElementComponent]
+})
+export class AppModule {
+  constructor(private injector: Injector) {}
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+  ngDoBootstrap(): void {
+    const { injector } = this;
 
-## Running end-to-end tests
+    const ngCustomElement = createCustomElement(CustomeElementComponent, {
+      injector
+    });
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+    customElements.define('ng-hello-world', ngCustomElement);
+  }
+}
+```
 
-## Further help
+4. Zur Unterstützung zum Bau eines Singlebundles `ngx-build-plus` installieren.
+   Mit `ngx-build-plus` kann die Standardfunktionalität von Angular CLI erweitert werden, ohne das das Projekt aus der CLI verwalteten herausgenommen werden muss.
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+```
+npm install ngx-build-plus --save-dev
+```
+
+In der angular.json müssen folgende Änderungen vorgenommen werden.
+
+```
+"architect": {
+        "build": {
+          "builder": "ngx-build-plus:build"
+        }
+        "serve": {
+          "builder": "ngx-build-plus:dev-server"
+        }
+}
+```
+
+5. Falls die Anwendung auf Browsern läuft, die den neuen Standard bereits unterstützen, kann gleich nach ES2015 kompliert werden.
+   In der tsconfig.app.json kann unter den compilerOptions als Ziel
+
+```
+"target": "es2015"
+```
+
+angegeben werden.
+
+6. Läuft die Webkomponente nicht innerhalb einer Angular-Umgebung muss zusätzlich noch `zone.js` zur Change Detection mit eingebunden werden.
+   Dies erfolgt mittels import in der main.ts
+
+```javascript
+import 'zone.js';
+import { enableProdMode } from '@angular/core';
+import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+
+import { AppModule } from './app/app.module';
+import { environment } from './environments/environment';
+
+if (environment.production) {
+  enableProdMode();
+}
+
+platformBrowserDynamic()
+  .bootstrapModule(AppModule)
+  .catch(err => console.error(err));
+```
+
+7. Bau der Anwendung
+
+```
+ng build --prod --output-hashing none --single-bundle true
+```
