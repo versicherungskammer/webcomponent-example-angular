@@ -1,0 +1,18 @@
+<!DOCTYPE hmtl>
+<html>
+  <head>
+    <title>Hello World Webcomponent</title>
+  </head>
+  <body>
+    <ng-hello-world id="helloworld" message="Giesing"></ng-hello-world>
+
+    <p id="result"></p>
+
+    <script>
+      const elem = document.getElementById('helloworld');
+      elem.addEventListener('click', e => console.log(e));
+    </script>
+
+    <script src="angular-webcomponent/main.js"></script>
+  </body>
+</html>
